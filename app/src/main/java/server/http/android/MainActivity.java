@@ -2,7 +2,6 @@ package server.http.android;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -45,23 +44,20 @@ public class MainActivity extends AppCompatActivity {
         startServer();
     }
 
-//    @Override
-//    public void onPause() {
-//        super.onPause();
-//        //server.stop();
-//    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        server.stop();
+        mAsyncServer.stop();
+    }
 
     private void startServer() {
-        Log.i("async", "=======> server started");
-
         server.get("/", new HttpServerRequestCallback() {
             @Override
             public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
-                Log.i("async", "=======> server started and request served");
                 response.send("Hello!!!");
             }
         });
-
         server.listen(mAsyncServer, 8080);
     }
 }
