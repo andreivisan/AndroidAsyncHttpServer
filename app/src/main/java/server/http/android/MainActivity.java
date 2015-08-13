@@ -2,14 +2,19 @@ package server.http.android;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.koushikdutta.async.AsyncServer;
+import com.koushikdutta.async.http.body.AsyncHttpRequestBody;
 import com.koushikdutta.async.http.server.AsyncHttpServer;
 import com.koushikdutta.async.http.server.AsyncHttpServerRequest;
 import com.koushikdutta.async.http.server.AsyncHttpServerResponse;
 import com.koushikdutta.async.http.server.HttpServerRequestCallback;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -56,6 +61,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRequest(AsyncHttpServerRequest request, AsyncHttpServerResponse response) {
                 response.send("Hello!!!");
+            }
+        });
+
+        server.post("/testJson", new HttpServerRequestCallback() {
+            @Override
+            public void onRequest(AsyncHttpServerRequest asyncHttpServerRequest, AsyncHttpServerResponse asyncHttpServerResponse) {
+                AsyncHttpRequestBody requestBody = asyncHttpServerRequest.getBody();
+                try {
+                    asyncHttpServerResponse.code(200);
+                    asyncHttpServerResponse.send(new JSONObject(requestBody.toString()).getJSONObject("menu").getString("value"));
+                } catch (JSONException e) {
+                    Log.e("MainActivity", e.getMessage(), e);
+                }
             }
         });
         server.listen(mAsyncServer, 8080);
